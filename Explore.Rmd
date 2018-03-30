@@ -1,0 +1,142 @@
+---
+title: "R Book - Explore"
+author: "Pablo"
+date: "3/30/2018"
+output: html_document
+---
+
+## Loading tidyverse
+```{r}
+#install.packages("tidyverse")
+library(tidyverse)
+library(ggplot2)
+```
+
+## Carregando dados mpg
+```{r}
+mpg <- ggplot2::mpg # Assim posso carregar itens de uma lib sem carregar toda ela.
+```
+
+## Comparando consumo de gasolina e motor
+```{r}
+# displ -> tamanho do motor
+# hwy -> consumo em rodovias
+
+ggplot(data = mpg)+
+  geom_point(mapping = aes(x = displ, y = hwy))
+```
+
+## Dados do dataframe
+```{r}
+summary(mpg)
+?mpg
+```
+
+## hwy(milhas por galão) vs cyl(cilíndros)
+```{r}
+ggplot(data = mpg)+
+  geom_point(aes(x = hwy, y = cyl))
+```
+
+## Classe vs drv ?
+```{r}
+ggplot(data = mpg)+
+  geom_point(aes(x = class, y = cyl))
+
+# Não posso fazer um scatterplot pq tenho uma variável de categoria
+
+ggplot(data = mpg)+
+  geom_point(aes(x = displ, y = hwy, color = class))
+```
+
+## Pintando os pontos
+```{r}
+ggplot(data = mpg)+
+  geom_point(aes(x = displ, y = hwy), color = "blue")
+```
+
+
+## Mapeando um indice com uma variável contínua  
+```{r}
+ggplot(data = mpg)+
+  geom_point(aes(x = displ, y = hwy, color = hwy))
+
+ggplot(data = mpg)+
+  geom_point(aes(x = displ, y = hwy, size = hwy, color = hwy))
+```
+
+
+
+## Stroke
+```{r}
+?geom_point
+
+ggplot(data = mpg)+
+  geom_point(aes(x = displ, y = hwy, stroke = displ < 5))
+```
+
+## Facets
+```{r}
+ggplot(data = mpg)+
+  geom_point(aes(x = displ, y = hwy))+
+  facet_wrap(~ class, nrow = 2)
+
+# Não faça isso aqui em baixo
+ggplot(data = mpg)+
+  geom_point(aes(x = displ, y = hwy))+
+  facet_wrap(~ cty, nrow = 2)
+
+
+# Itens em branco indicam que não tenho um relacionamento, no caso como exemplo não tenho relacionamento entre tração frontal e minivan
+ggplot(data = mpg)+
+  geom_point(aes(x = displ, y = hwy))+
+  facet_grid(drv ~ class)
+
+# Prova 
+mpg[mpg$drv == 'r' & mpg$class == 'minivan', ]
+
+
+## USANDO (.)
+
+ggplot(data = mpg)+
+  geom_point(aes(x = displ, y = hwy))+
+  facet_grid(drv ~ .)
+
+
+ggplot(data = mpg)+
+  geom_point(aes(x = displ, y = hwy))+
+  facet_grid(. ~ cyl)
+
+?facet_wrap
+?facet_grid
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
