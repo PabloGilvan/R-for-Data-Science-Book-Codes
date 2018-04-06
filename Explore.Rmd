@@ -180,11 +180,103 @@ ggplot(data = mpg, mapping = aes(x = displ, y = hwy))+
 ```
 
 
+# Using dplyr
+```{r}
+unloadNamespace("ggplot2")
+library(nycflights13)
+head(flights)
+```
 
+## filter()
+```{r}
+dplyr::filter(flights, month == 1, day == 1)
+dplyr::filter(flights, month == 1, day %in% c(1:10))
+dplyr::filter(flights, month == 1, day %in% c(1:10) | is.na(day))
 
+dplyr::filter(flights, arr_delay >= 120, dep_delay == 0)
+dplyr::filter(flights, dest == 'IAH' | dest == 'HOU')
 
+```
 
+## arrange()
+```{r}
+dplyr::arrange(flights, year, month, day, dplyr::desc(day))
+```
 
+## select()
+```{r}
+dplyr::select(flights, year, month, day)
+
+# Todas as colunas entre year e day
+dplyr::select(flights, year:day)
+
+# Todas as colunas menos as colunas year, month e day
+dplyr::select(flights, -(year:day))
+
+dplyr::select(flights, dplyr::starts_with("da"))
+
+dplyr::select(flights, dplyr::ends_with("y"))
+
+dplyr::select(flights, dplyr::contains("ay"))
+
+dplyr::select(flights, dplyr::contains("TIME"))
+
+dplyr::select(flights, dplyr::num_range("x", 1:3))
+
+# Útil caso tenha muitas colunas, assim movo colunas desejadas para frente
+dplyr::select(flights, time_hour, air_time, dplyr::everything())
+
+?dplyr::select
+```
+
+## rename()
+```{r}
+dplyr::rename(flights, jaspion = day)
+```
+
+## mutate() -> Mantém as colunas antigas e cria novas
+```{r}
+View(flights)
+
+flights_sml <- dplyr::select(flights, 
+                             year:day,
+                             dplyr::ends_with("delay"),
+                             distance,
+                             air_time)
+dplyr::mutate(flights_sml,
+              gain = arr_delay - dep_delay,
+              speed = distance / air_time * 60,
+              hours = air_time / 60,
+              gain_per_hour = gain / hours)
+
+dplyr::mutate(flights,
+              dplyr::row_number() == 1L)
+
+x <- c(5, 1, 3, 2, 2, NA)
+dplyr::row_number(x)
+dplyr::min_rank(x)
+dplyr::dense_rank(x)
+dplyr::percent_rank(x)
+dplyr::cume_dist(x)
+
+dplyr::ntile(x, 2)
+dplyr::ntile(runif(100), 10)
+
+# row_number can be used with single table verbs without specifying x
+# (for data frames and databases that support windowing)
+dplyr::mutate(mtcars, row_number() == 1L)
+dplyr::filter(mtcars, dplyr::between(row_number(), 1, 10))
+
+```
+
+## transmute() -> Mesma utilidade mas retorno diferente do mutate, mantém somente as novas colunas
+```{r}
+dplyr::transmute(flights_sml,
+              gain = arr_delay - dep_delay,
+              speed = distance / air_time * 60,
+              hours = air_time / 60,
+              gain_per_hour = gain / hours)
+```
 
 
 
